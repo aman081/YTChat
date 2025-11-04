@@ -13,15 +13,15 @@ This project is a YouTube Chatbot that allows users to interact with YouTube vid
 
 ## Project Structure
 
-- `.env`: Environment variables for API keys and other configurations.
-- `generatechunks.py`: Script for processing transcripts and generating chunks.
-- `retrieval.py`: Script for retrieving information from the vector database.
-- `serviceAccountKey.json`: Firebase service account key for authentication.
-- `storetranscript.py`: Script for fetching and storing YouTube video transcripts.
-- `streamlitapp.py`: The main Streamlit application file.
-- `db/`: Directory containing the ChromaDB vector database files.
-- `documents/`: Directory for storing raw transcript files.
-- `virt/`: Virtual environment directory.
+- `.env`: This file stores environment variables such as API keys (e.g., for OpenAI or Google Generative AI) and other sensitive configurations. It's crucial for keeping credentials out of the codebase.
+- `generatechunks.py`: This script is responsible for taking raw video transcripts, breaking them down into smaller, manageable "chunks," and then embedding these chunks into a vector database. This process is vital for efficient retrieval of relevant information.
+- `retrieval.py`: This script handles the core retrieval-augmented generation (RAG) logic. It queries the vector database with a user's question, retrieves the most relevant transcript chunks, and then uses a language model to generate a coherent answer based on the retrieved context.
+- `serviceAccountKey.json`: This JSON file contains the credentials for Firebase Admin SDK, enabling the application to interact with Firebase services (e.g., Firestore for data storage, Authentication for user management).
+- `storetranscript.py`: This script is dedicated to fetching transcripts from YouTube videos using the `youtube-transcript-api` library and storing them, potentially in the `documents/` directory or directly processing them for the vector database.
+- `streamlitapp.py`: This is the main entry point for the user interface. It's a Streamlit application that provides a web-based interface for users to input YouTube URLs, trigger transcript processing, and interact with the chatbot.
+- `db/`: This directory houses the ChromaDB vector database. It contains the necessary files for storing and indexing the embedded transcript chunks, allowing for fast semantic searches.
+- `documents/`: This directory is intended for storing raw transcript files or other textual documents that the chatbot might process.
+- `virt/`: This directory contains the Python virtual environment, which isolates project dependencies from the system-wide Python installation.
 
 ## Setup and Installation
 
@@ -55,14 +55,11 @@ python -m venv virt
 
 ### 4. Install Dependencies
 
-Install all required Python packages. You might need a `requirements.txt` file for this. If not available, you'll need to install them manually. Assuming common libraries:
+Install all required Python packages using the `requirements.txt` file:
 
 ```bash
 pip install -r requirements.txt
-# If requirements.txt is not present, you might need to install:
-# pip install youtube-transcript-api chromadb streamlit python-dotenv firebase-admin
 ```
-*(Note: A `requirements.txt` file is not present in the current directory. You may need to create one based on the project's dependencies.)*
 
 ### 5. Configure Environment Variables
 
@@ -71,12 +68,13 @@ Create a `.env` file in the root directory of the project and add your API keys 
 ```
 # Example .env content
 OPENAI_API_KEY="your_openai_api_key_here"
+GOOGLE_API_KEY="your_google_generative_ai_key_here"
 # Add any other API keys or configurations required by the project
 ```
 
 ### 6. Set up Firebase (if applicable)
 
-Place your `serviceAccountKey.json` file in the root directory of the project. This file is crucial for Firebase authentication.
+Place your `serviceAccountKey.json` file in the root directory of the project. This file is crucial for Firebase authentication and interaction.
 
 ### 7. Run the Streamlit Application
 
@@ -86,17 +84,28 @@ Once all dependencies are installed and configurations are set, you can run the 
 streamlit run streamlitapp.py
 ```
 
-This will open the application in your web browser.
+This will open the application in your web browser, typically at `http://localhost:8501`.
 
 ## Usage
 
-1. **Enter YouTube Video URL**: In the Streamlit application, provide the URL of the YouTube video you want to analyze.
-2. **Fetch and Process Transcript**: The application will fetch the transcript, chunk it, and store it in the vector database.
-3. **Ask Questions**: You can then ask questions related to the video content, and the chatbot will retrieve relevant information and generate responses.
+1. **Enter YouTube Video URL**: In the Streamlit application's sidebar or input field, paste the URL of the YouTube video you wish to analyze.
+2. **Fetch and Process Transcript**: Click the "Fetch Transcript" or similar button. The application will then:
+    - Download the video's transcript.
+    - Process the transcript into smaller, semantically relevant chunks.
+    - Embed these chunks and store them in the ChromaDB vector database.
+3. **Ask Questions**: Once the transcript is processed, a chat interface will appear. You can type your questions related to the video content into the input box.
+4. **Receive Responses**: The chatbot will use the RAG mechanism to retrieve relevant information from the stored transcript chunks and generate a concise, context-aware answer to your question.
 
 ## Contributing
 
-Feel free to fork the repository, make improvements, and submit pull requests.
+We welcome contributions to improve this project! Please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Make your changes and ensure the code adheres to the project's style.
+4. Write clear commit messages.
+5. Push your branch (`git push origin feature/YourFeature`).
+6. Open a Pull Request with a detailed description of your changes.
 
 ## License
 
