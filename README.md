@@ -30,7 +30,7 @@ Follow these steps to set up and run the project locally:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/satyam969/YT-BOT.git
+git clone https://github.com/aman081/YT-BOT.git
 cd YT-BOT
 ```
 
